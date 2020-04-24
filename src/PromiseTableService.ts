@@ -237,7 +237,7 @@ export class PromiseTableService {
 
     const self = this
 
-    EnumFunctionsAsync.forEach(function assignAsyncFunction (funcName) {
+    EnumFunctionsAsync.forEach(function (funcName) {
       if (typeof self._tableService[funcName] === 'function') {
         self[funcName] = promisify(
           self._tableService[funcName].bind(self._tableService)
@@ -245,15 +245,13 @@ export class PromiseTableService {
       }
     })
 
-    EnumFunctionsSync.forEach(function assignSyncFunction (funcName) {
+    EnumFunctionsSync.forEach(function (funcName) {
       if (typeof self._tableService[funcName] === 'function') {
         self[funcName] = self._tableService[funcName].bind(self._tableService)
       }
     })
 
-    EnumFunctionsTableService.forEach(function assignTableServiceFunction (
-      funcName
-    ) {
+    EnumFunctionsTableService.forEach(function (funcName) {
       if (typeof self._tableService[funcName] === 'function') {
         const func = self._tableService[funcName].bind(self._tableService)
 
@@ -265,34 +263,4 @@ export class PromiseTableService {
   }
 
   private readonly _tableService: TableService
-
-  withFilter (newFilter: common.filters.IFilter): PromiseTableService {
-    return new PromiseTableService(this._tableService.withFilter(newFilter))
-  }
-
-  generateSharedAccessSignature (
-    table: string,
-    sharedAccessPolicy: TableService.TableSharedAccessPolicy
-  ): string {
-    return this._tableService.generateSharedAccessSignature(
-      table,
-      sharedAccessPolicy
-    )
-  }
-
-  generateSharedAccessSignatureWithVersion (
-    table: string,
-    sharedAccessPolicy: TableService.TableSharedAccessPolicy,
-    sasVersion: string
-  ): string {
-    return this._tableService.generateSharedAccessSignatureWithVersion(
-      table,
-      sharedAccessPolicy,
-      sasVersion
-    )
-  }
-
-  getUrl (table: string, sasToken?: string, primary?: boolean): string {
-    return this._tableService.getUrl(table, sasToken, primary)
-  }
 }
