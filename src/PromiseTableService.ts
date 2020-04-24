@@ -235,31 +235,29 @@ export class PromiseTableService {
       this._tableService = storageAccountOrConnectionString
     }
 
-    const self = this
-
-    EnumFunctionsAsync.forEach(function (funcName) {
-      if (typeof self._tableService[funcName] === 'function') {
-        self[funcName] = promisify(
-          self._tableService[funcName].bind(self._tableService)
+    for (let funcName of EnumFunctionsAsync) {
+      if (typeof this._tableService[funcName] === 'function') {
+        this[funcName] = promisify(
+          this._tableService[funcName].bind(this._tableService)
         )
       }
-    })
+    }
 
-    EnumFunctionsSync.forEach(function (funcName) {
-      if (typeof self._tableService[funcName] === 'function') {
-        self[funcName] = self._tableService[funcName].bind(self._tableService)
+    for (let funcName of EnumFunctionsSync) {
+      if (typeof this._tableService[funcName] === 'function') {
+        this[funcName] = this._tableService[funcName].bind(this._tableService)
       }
-    })
+    }
 
-    EnumFunctionsTableService.forEach(function (funcName) {
-      if (typeof self._tableService[funcName] === 'function') {
-        const func = self._tableService[funcName].bind(self._tableService)
+    for (let funcName of EnumFunctionsTableService) {
+      if (typeof this._tableService[funcName] === 'function') {
+        const func = this._tableService[funcName].bind(this._tableService)
 
-        self[funcName] = function (...args: any[]) {
+        this[funcName] = function (...args: any[]) {
           return new PromiseTableService(func(...args))
         }
       }
-    })
+    }
   }
 
   private readonly _tableService: TableService
