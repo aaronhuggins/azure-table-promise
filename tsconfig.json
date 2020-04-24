@@ -9,19 +9,8 @@
     "experimentalDecorators": true,
     "outDir": "dist",
     "declaration": true,
-    "types": [
-      "mocha",
-      "node"
-    ]
+    "types": ["mocha", "node"]
   },
-  "include": [
-    "index.ts",
-    "src",
-    "test"
-  ],
-  "exclude": [
-    "node_modules",
-    "index.d.ts",
-    "dist"
-  ]
+  "include": ["index.ts", "src", "test"],
+  "exclude": ["node_modules", "index.d.ts", "dist"]
 }

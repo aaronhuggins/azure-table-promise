@@ -28,6 +28,4 @@ export const EnumFunctionsSync = [
   'getUrl'
 ]
 
-export const EnumFunctionsTableService = [
-  'withFilter'
-]
+export const EnumFunctionsTableService = ['withFilter']

@@ -50,7 +50,7 @@ describe('class PromiseTableService', () => {
   // Lacking Azurite support
   it('should get service stats', async () => {
     // const stats = await tableService.getServiceStats()
-    
+
     chai.expect(typeof tableService.getServiceStats).to.equal('function')
   })
 })
