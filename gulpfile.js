@@ -12,13 +12,13 @@ const azurite = new Service({
 })
 
 exports.mocha = async function mocha () {
-  return shell.task(['mocha'], { ignoreErrors: true })
+  return shell.task(['mocha'], { ignoreErrors: true })()
 }
 exports.nyc = async function nyc () {
-  return shell.task(['nyc mocha'], { ignoreErrors: true })
+  return shell.task(['nyc mocha'], { ignoreErrors: true })()
 }
 exports.test = gulp.series(azurite.start, exports.mocha, azurite.stop)
 exports.coverage = gulp.series(azurite.start, exports.nyc, azurite.stop)
 exports.compile = async function compile () {
-  return shell.task(['tsc'])
+  return shell.task(['tsc'])()
 }
