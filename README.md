@@ -28,7 +28,7 @@ See function `createPromiseTableService`.
 
 Exports the `azure` namespace for convenience, which includes all untouched functions, classes, and constants from library `azure-storage`.
 
-### Tests and Code Coverage
+## Tests and Code Coverage
 
 This library features 100% code coverage, but this is more a feature of the dynamic instantiation of functions than it is an indicator of test completeness. The tests rely on Azurite V2 for validating that the promises work; once Azurite V3 supports Storage Tables it is expected that Microsoft will have released a promise-based library, which in turn removes the need for this library.
 
