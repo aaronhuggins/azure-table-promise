@@ -1,5 +1,5 @@
 import * as chai from 'chai'
-import { createTableService, PromiseTableService } from '../index'
+import { azure, createTableService, PromiseTableService } from '../index'
 
 const connectionArray = [
   'DefaultEndpointsProtocol=http',
@@ -12,11 +12,19 @@ let tableService: PromiseTableService
 
 describe('class PromiseTableService', () => {
   before(() => {
-    tableService = createTableService(connectionString)
+    tableService = new PromiseTableService(connectionString)
+  })
+
+  it('should construct new PromiseTableService', () => {
+    const result = new PromiseTableService(connectionString)
+
+    chai.expect(result instanceof PromiseTableService).to.equal(true)
   })
 
   it('should be returned by function createTableService', () => {
-    chai.expect(tableService instanceof PromiseTableService).to.equal(true)
+    const result = createTableService(connectionString)
+
+    chai.expect(result instanceof PromiseTableService).to.equal(true)
   })
 
   it('should create and delete tables', async () => {
@@ -45,6 +53,13 @@ describe('class PromiseTableService', () => {
     resultBool = await tableService.deleteTableIfExists(table2Name)
 
     chai.expect(resultBool).to.equal(true)
+  })
+
+  it('should return instance with filter', () => {
+    const filter = new azure.LinearRetryPolicyFilter()
+    const result = tableService.withFilter(filter)
+
+    chai.expect(result instanceof PromiseTableService).to.equal(true)
   })
 
   // Lacking Azurite support
