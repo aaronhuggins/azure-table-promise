@@ -15,8 +15,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "azure-storage": "^2.10.3",
-    "gulp-cli": "^2.2.0"
+    "azure-storage": "^2.10.3"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
