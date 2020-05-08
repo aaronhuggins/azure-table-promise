@@ -1,6 +1,6 @@
 {
   "name": "azure-table-promise",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Promisified functionality for Azure Storage Tables.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
