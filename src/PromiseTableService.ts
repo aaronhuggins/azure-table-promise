@@ -261,4 +261,45 @@ export class PromiseTableService {
   }
 
   private readonly _tableService: TableService
+
+  queryEntitiesAll<T> (
+    table: string,
+    tableQuery: TableQuery,
+    options: TableService.TableEntityRequestOptions
+  ): Promise<TableService.QueryEntitiesResult<T>>
+  queryEntitiesAll<T> (
+    table: string,
+    tableQuery: TableQuery
+  ): Promise<TableService.QueryEntitiesResult<T>>
+  async queryEntitiesAll<T> (
+    table: string,
+    tableQuery: TableQuery,
+    options?: TableService.TableEntityRequestOptions
+  ): Promise<TableService.QueryEntitiesResult<T>> {
+    let currentToken: TableService.TableContinuationToken | boolean = null
+    let entries: Array<T> = []
+    let result: TableService.QueryEntitiesResult<T>
+
+    while (currentToken !== false) {
+      const response: TableService.QueryEntitiesResult<T> = await this.queryEntities<
+        T
+      >(
+        table,
+        tableQuery,
+        currentToken as TableService.TableContinuationToken,
+        options
+      )
+
+      entries = entries.concat(response.entries)
+
+      if (response.continuationToken) {
+        currentToken = response.continuationToken
+      } else {
+        result = { ...response, entries }
+        currentToken = false
+      }
+    }
+
+    return result
+  }
 }

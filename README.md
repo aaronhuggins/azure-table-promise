@@ -16,6 +16,10 @@ Wraps class `TableService` and provides the exact same API with every callback-s
 
 See [the docs](https://azure.github.io/azure-storage-node/TableService.html) for `azure-storage` for complete details of each function and its arguments. Always omit the callback, as the promise automatically will either resolve with the response of the callback, or reject with the callback error.
 
+#### function `PromiseTableService~queryEntitiesAll<T>(table: string, tableQuery: TableQuery, options?: TableService.TableEntityRequestOptions): Promise<TableService.QueryEntitiesResult<T>>`
+
+Adds support for a fetch-all query by paging through results of method `queryEntities`.
+
 ### function `createPromiseTableService`
 
 Method which wraps `createTableService` for API completeness.
