@@ -20,6 +20,10 @@ See [the docs](https://azure.github.io/azure-storage-node/TableService.html) for
 
 Adds support for a fetch-all query by paging through results of method `queryEntities`.
 
+### function `entityResolver`
+
+Method which may be used to resolve table entities from typed EDM properties to plain JavaScript objects.
+
 ### function `createPromiseTableService`
 
 Method which wraps `createTableService` for API completeness.
@@ -31,6 +35,10 @@ See function `createPromiseTableService`.
 ### Property `azure`
 
 Exports the `azure` namespace for convenience, which includes all untouched functions, classes, and constants from library `azure-storage`.
+
+### Option extensions
+
+Adds option `resolveEntity: boolean` to options for `retrieveEntity`, `queryEntities`, and `queryEntitiesAll` methods; automatically uses internal `entityResolver` function when set to `true`.
 
 ## Tests and Code Coverage
 

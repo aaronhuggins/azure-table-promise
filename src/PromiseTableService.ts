@@ -9,8 +9,13 @@ import { promisify } from 'util'
 import {
   EnumFunctionsAsync,
   EnumFunctionsSync,
-  EnumFunctionsTableService
+  EnumFunctionsTableService,
+  TableEntityRequestFunctions
 } from './EnumFunctions'
+
+export interface TableEntityRequestOptions extends TableService.TableEntityRequestOptions {
+  resolveEntity: boolean
+}
 
 export interface PromiseTableService {
   getServiceStats(): Promise<common.models.ServiceStats>
@@ -104,7 +109,7 @@ export interface PromiseTableService {
     table: string,
     tableQuery: TableQuery,
     currentToken: TableService.TableContinuationToken,
-    options: TableService.TableEntityRequestOptions
+    options: TableEntityRequestOptions
   ): Promise<TableService.QueryEntitiesResult<T>>
   queryEntities<T>(
     table: string,
@@ -116,7 +121,7 @@ export interface PromiseTableService {
     table: string,
     partitionKey: string,
     rowKey: string,
-    options: TableService.TableEntityRequestOptions
+    options: TableEntityRequestOptions
   ): Promise<T>
   retrieveEntity<T>(
     table: string,
@@ -189,7 +194,7 @@ export interface PromiseTableService {
   executeBatch(
     table: string,
     batch: TableBatch,
-    options: TableService.TableEntityRequestOptions
+    options: TableEntityRequestOptions
   ): Promise<TableService.BatchResult[]>
   executeBatch(
     table: string,
@@ -210,6 +215,18 @@ export interface PromiseTableService {
   ): string
 
   getUrl(table: string, sasToken?: string, primary?: boolean): string
+}
+
+export function entityResolver (entity: { [key: string]: { _?: any, $?: string } }): { [key: string]: any } {
+  const result: { [key: string]: any } = {}
+
+  for (const [key, value] of Object.entries(entity)) {
+    if (typeof result[key] === 'undefined' && typeof value._ !== 'undefined') {
+      result[key] = value._
+    }
+  }
+
+  return result
 }
 
 export class PromiseTableService {
@@ -237,9 +254,22 @@ export class PromiseTableService {
 
     for (let funcName of EnumFunctionsAsync) {
       if (typeof this._tableService[funcName] === 'function') {
-        this[funcName] = promisify(
-          this._tableService[funcName].bind(this._tableService)
-        )
+        if (TableEntityRequestFunctions.includes(funcName)) {
+          const promise = promisify(
+            this._tableService[funcName].bind(this._tableService)
+          )
+          this[funcName] = async function (arg0: any, arg1: any, arg2: any, options?: TableEntityRequestOptions) {
+            if (typeof options === 'object' && options.resolveEntity) {
+              options = { entityResolver, ...options }
+            }
+
+            return await promise(arg0, arg1, arg2, options)
+          }
+        } else {
+          this[funcName] = promisify(
+            this._tableService[funcName].bind(this._tableService)
+          )
+        }
       }
     }
 
@@ -265,7 +295,7 @@ export class PromiseTableService {
   queryEntitiesAll<T> (
     table: string,
     tableQuery: TableQuery,
-    options: TableService.TableEntityRequestOptions
+    options: TableEntityRequestOptions
   ): Promise<TableService.QueryEntitiesResult<T>>
   queryEntitiesAll<T> (
     table: string,
@@ -274,8 +304,12 @@ export class PromiseTableService {
   async queryEntitiesAll<T> (
     table: string,
     tableQuery: TableQuery,
-    options?: TableService.TableEntityRequestOptions
+    options?: TableEntityRequestOptions
   ): Promise<TableService.QueryEntitiesResult<T>> {
+    if (typeof options === 'object' && options.resolveEntity) {
+      options = { entityResolver, ...options }
+    }
+
     let currentToken: TableService.TableContinuationToken | boolean = null
     let entries: Array<T> = []
     let result: TableService.QueryEntitiesResult<T>

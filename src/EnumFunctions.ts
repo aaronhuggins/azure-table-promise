@@ -22,6 +22,11 @@ export const EnumFunctionsAsync = [
   'setTableAcl'
 ]
 
+export const TableEntityRequestFunctions = [
+  'queryEntities',
+  'retrieveEntity'
+]
+
 export const EnumFunctionsSync = [
   'generateSharedAccessSignature',
   'generateSharedAccessSignatureWithVersion',

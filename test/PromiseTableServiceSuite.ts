@@ -1,6 +1,12 @@
 import * as chai from 'chai'
 import { azure, createTableService, PromiseTableService } from '../index'
 
+interface TestTableRow {
+  PartitionKey: string
+  RowKey: string
+  prop: string
+}
+
 const connectionArray = [
   'DefaultEndpointsProtocol=http',
   'AccountName=devstoreaccount1',
@@ -67,5 +73,54 @@ describe('class PromiseTableService', () => {
     // const stats = await tableService.getServiceStats()
 
     chai.expect(typeof tableService.getServiceStats).to.equal('function')
+  })
+
+  it('should create and query entities', async () => {
+    const INSERT_COUNT = 5
+    const tableName = 'Entities'
+    const partitionKey = 'test'
+    const rowKey = 'some_key'
+    const result = await tableService.createTable(tableName)
+
+    chai.expect(result.TableName).to.equal(tableName)
+
+    for (let i = 0; i < INSERT_COUNT; i += 1) {
+      await tableService.insertOrMergeEntity<TestTableRow>(
+        tableName,
+        { PartitionKey: partitionKey, RowKey: rowKey + i.toString(), prop: rowKey + i.toString() }
+      )
+    }
+
+    const { entries } = await tableService.queryEntitiesAll<TestTableRow>(tableName, null, { resolveEntity: true })
+    const { entries: typedEntries } = await tableService.queryEntitiesAll<TestTableRow>(tableName, null, { resolveEntity: false })
+
+    chai.expect(typeof entries[0].PartitionKey).to.equal('string')
+    chai.expect(typeof typedEntries[0].PartitionKey).to.equal('object')
+
+    // Only for test purposes; do not use this mock in production.
+    let continuation = true
+    const queryEntities = tableService.queryEntities
+    tableService.queryEntities = async function<T> (...args: any[]): Promise<azure.TableService.QueryEntitiesResult<T>> {
+      if (continuation) {
+        const res = await queryEntities<T>(args[0], args[1], args[2], args[3])
+
+        continuation = false
+
+        return {
+          ...res,
+          continuationToken: {
+            nextPartitionKey: 'string',
+            nextRowKey: 'string',
+            targetLocation: 0
+          }
+        }
+      }
+
+      return await queryEntities<T>(args[0], args[1], args[2], args[3])
+    }
+
+    const { entries: continuedEntries } = await tableService.queryEntitiesAll<TestTableRow>(tableName, null, { resolveEntity: true })
+
+    chai.expect(continuedEntries.length).to.equal(INSERT_COUNT * 2)
   })
 })
