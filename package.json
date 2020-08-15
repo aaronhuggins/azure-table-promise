@@ -1,6 +1,6 @@
 {
   "name": "azure-table-promise",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Promisified functionality for Azure Storage Tables.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "prepublish": "gulp compile",
+    "prepack": "gulp compile",
     "test": "gulp test",
     "build": "gulp compile"
   },
