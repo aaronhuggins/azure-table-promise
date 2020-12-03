@@ -1,8 +1,8 @@
-const gulp = require('gulp')
-const shell = require('gulp-shell')
-const fs = require('fs')
-const path = require('path')
-const { Service } = require('./service')
+import * as gulp from 'gulp'
+import * as shell from 'gulp-shell'
+import * as fs from 'fs'
+import * as path from 'path'
+import { Service } from 'managed-service-daemon'
 const azuriteDir = './.azurite'
 const azurite = new Service({
   name: 'azurite',
