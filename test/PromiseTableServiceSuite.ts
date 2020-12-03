@@ -85,7 +85,7 @@ describe('class PromiseTableService', () => {
     chai.expect(result.TableName).to.equal(tableName)
 
     for (let i = 0; i < INSERT_COUNT; i += 1) {
-      await tableService.insertOrMergeEntity<TestTableRow>(
+      await tableService.insertOrReplaceEntity<TestTableRow>(
         tableName,
         { PartitionKey: partitionKey, RowKey: rowKey + i.toString(), prop: rowKey + i.toString() }
       )
